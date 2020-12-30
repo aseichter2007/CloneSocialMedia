@@ -8,16 +8,18 @@ const postSchema = new mongoose.Schema({
     description: {type: String, required:false, default: "test post do not upvote this"},
     text: {type: String, required:false, default:"test post do not upvote me"},
     datetModified: {type: Date, required:false, default: Date.now},
-    comments: {type: [commentSchema], required:false, default:[]}
+    comments: {type: [commentSchema], required:false, default:[]},
+    likes:{type: Number, required:false, default:0}
 });
 const Post = mongoose.model('Post', postSchema);
 
 function validatePost(post){
     const schema = Joi.object({
-        user: Joi.string().required(),
+        user: Joi.string(),
         title: Joi.string(),
         description: Joi.string(),
-        text: Joi.string()
+        text: Joi.string(),
+        likes: Joi.number()
     });
     return schema.validate(post);
 }
