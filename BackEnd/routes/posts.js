@@ -22,7 +22,7 @@ router.post('/', auth, async (req, res)=>{
         await post.save();
         return res.send(post);
     } catch (ex) {
-        return res.status(500).send(`internal server error: ${ex}`)
+        return res.status(500).send(`internal server error post post: ${ex}`)
 
     }
 });
@@ -43,7 +43,7 @@ router.delete('/:postid', auth, async (req, res) => {
 
         return res.send(true);
     } catch (ex) {
-        return res.status(500).send(`internal server error: ${ex}`)
+        return res.status(500).send(`internal server error post delete: ${ex}`)
     }
 });
 router.get('/like/:postId', auth, async (req, res) => {
@@ -56,14 +56,15 @@ router.get('/like/:postId', auth, async (req, res) => {
         post.save();
         return res.send(true);
     } catch (ex) {
-        return res.status(500).send(`internal server error: ${ex}`)
+        return res.status(500).send(`internal server error post like: ${ex}`)
     }
 })
 router.get('/', auth, async (req, res) => {
     try {
+        console.log("getposts")
         const user = await User.findOne({ userName: req.user.userName });
         if (!user) {
-            return res.status(400).send(`user with username "${req.user.username}" doesnt exist`);
+            return res.status(400).send(`user with username "${req.user.userName}" doesnt exist`);
         }
         let posts = [];
         user.friends.forEach(friend=>{
@@ -72,9 +73,9 @@ router.get('/', auth, async (req, res) => {
                posts.push(post);
            })
         })
-        posts = posts.sort((a,b)=>a.getTime()-b.getTime());
+        posts = posts.sort((a,b)=>{a.datetModified.getTime()-b.datetModified.getTime()});
     } catch (ex) {
-        return res.status(500).send(`internal server error: ${ex}`)
+        return res.status(500).send(`internal server error post get: ${ex}`)
 
     }
 })

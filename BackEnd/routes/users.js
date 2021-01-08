@@ -1,4 +1,4 @@
-const User = require('../models/user');
+const {User} = require('../models/user');
 const auth = require('../middleware/auth');
 const express = require('express');
 const bcrypt = require('bcrypt');
@@ -14,9 +14,22 @@ router.get('/profile/:userName', auth, async (req, res) => {
        return res.send(user);
        
    } catch (ex) {
-    return res.status(500).send(`internal server error: ${ex}`)
+    return res.status(500).send(`internal server error user get profile: ${ex}`)
    }
 });
+router.get('/myprofile/', auth, async (req, res) => {
+    try {
+        let user = await User.findOne({username: req.user.userName})
+        if (!user) {
+         return res.status(400).send(`user with username "${req.user.userName}" doesn't exist`)
+        }
+        user.password = "nope";
+        return res.send(user);
+        
+    } catch (ex) {
+     return res.status(500).send(`internal server error user get profile: ${ex}`)
+    }
+ });
 //post get by username for password verify
 router.post('/login/', async (req, res) => {
 
@@ -25,10 +38,11 @@ router.post('/login/', async (req, res) => {
 router.post('/', async (req, res) => {
 
     try {
-        const { error } = validate(req.body);
+        /*const { error } = validate(req.body);
         if (error) {
             return res.status(400).send(error.details[0].message);
-        }
+        }*/
+        console.log(req.body);
         let user = await User.findOne({ email: req.body.email });
         if (user) {
             return res.status(400).send(`user with email "${req.body.email}" already exists`)
@@ -41,10 +55,10 @@ router.post('/', async (req, res) => {
         user = new User({
             userName: req.body.userName,
             email: req.body.email,
-            password: await bcrypt.hash(req.body.password)
+            password: await bcrypt.hash(req.body.password, salt)
         });
         //aboutme can be changed later on, too cluttered for basic account creation
-
+        console.log(user);
         await user.save();
         const token = user.generateAuthToken();
 
@@ -53,7 +67,8 @@ router.post('/', async (req, res) => {
             .send({ _id: user._id, userName: user.userName, email: user.email })
     }
     catch (ex) {
-        return res.status(500).send(`internal server error: ${ex}`)
+        console.log(ex);
+        return res.status(500).send(`internal server error user newuser: ${ex}`)
     }
 });
 //edit user
@@ -76,7 +91,7 @@ router.put('/', auth, async (req, res) => {
         return res.send(user);//shouldnt sent back whole user, exposes password
     }
     catch (ex) {
-        return res.status(500).send(`internal server error: ${ex}`)
+        return res.status(500).send(`internal server error user put: ${ex}`)
     }
 });
 //needs a username as friendUserName and the current users _id 
@@ -95,7 +110,7 @@ router.post('/addfriend/', auth, async (req, res) => {
         await friend.save();
         return res.send(friend);
     } catch (ex) {
-        return res.status(500).send(`internal server error: ${ex}`)
+        return res.status(500).send(`internal server error user addfriend: ${ex}`)
     }
 });
 //needs current user id and friend's id posted
@@ -122,7 +137,7 @@ router.post('/acceptfriend/', auth, async (req, res) => {
         await friend.save();//but the password needs to be intact here. 
         return res.send(user);
     } catch (ex) {
-        return res.status(500).send(`internal server error: ${ex}`);
+        return res.status(500).send(`internal server error user accept friend: ${ex}`);
     }
 });
 //needs current user id and friend's id posted
@@ -157,7 +172,7 @@ router.post('/removefriend/', auth, async (req, res) => {
         await friend.save();
         return res.send(true);
     } catch (ex) {
-        return res.status(500).send(`internal server error: ${ex}`);
+        return res.status(500).send(`internal server error remove friend: ${ex}`);
     }
 });
 module.exports = router;

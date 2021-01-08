@@ -1,9 +1,9 @@
-const { useState } = require('react');
+import react, {useState} from 'react';
 const { addPostComment, addCommentComment } = require('../Api');
 
-function NewComment(props) {
-    const { text, setText } = useState(null);
-    const { success, setSuccess } = useState(false);
+export default function NewComment(props) {
+    const  [text, setText]  = useState(null);
+    const  [ success, setSuccess ] = useState(false);
     function submitPostComment(e) {
         addPostComment(props.id, props.userToken, props.userToken).then((response) => {
             console.log(response);
@@ -57,4 +57,3 @@ function NewComment(props) {
         }
     }
 }
-module.exports = NewComment;

@@ -1,6 +1,6 @@
-const { useState } = require('react');
+import react, {useState} from 'react';
+import NewComment from './newComment';
 const {getPost} = require('../Api');
-const NewComment = require('./newComment');
 
 function renderComments(comments,userToken, level = 0){
     let renderedComments = [];
@@ -17,8 +17,8 @@ function renderComments(comments,userToken, level = 0){
     })
     return renderedComments;
 }
-function Post(props){
-    const{post, setPost}= useState(null);
+export default function Post(props){
+    const [post, setPost]= useState(null);
     getPost(props.id).then(response =>{
         setPost(response)
     })
@@ -42,4 +42,3 @@ function Post(props){
     }
 
 }
-module.exports = Post;

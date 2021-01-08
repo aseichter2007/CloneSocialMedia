@@ -28,7 +28,7 @@ router.post('/post/', auth, async (req, res)=>{
         
         return res.send(post);
     } catch (error) {
-        return res.status(500).send(`internal server error: ${error}`);
+        return res.status(500).send(`internal server error comment post/post: ${error}`);
     }
 });
 router.post('/comment/', auth, async (req, res)=>{
@@ -52,7 +52,7 @@ router.post('/comment/', auth, async (req, res)=>{
         
         return res.send(post);
     } catch (error) {
-        return res.status(500).send(`internal server error: ${error}`);
+        return res.status(500).send(`internal server error comment post/comment: ${error}`);
     }
 });
 module.exports = router;

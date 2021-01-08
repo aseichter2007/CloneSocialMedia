@@ -1,21 +1,21 @@
-const { useState } = require('react');
+import react, { useState } from 'react';
 
-function SignIn(props) {
-    const { email, setEmail } = useState(null);
-    const { userName, setUserName } = useState(null);
-    const { password, setPassword } = useState(null);
+export default function SignIn(props) {
+    const [userName, setUserName] = useState("");
+    const [password, setPassword] = useState("");
 
     function logIn(e) {
-        props.signIn(userName, password).then((response) => {
-            props.setToken(response);
-        });
         e.preventDefault();
+        props.signIn(userName, password).then((response) => {
+            //console.log(response.data);
+            props.setToken(response.data);
+        }).catch((err) => { console.error(err); });
     };
-    function handleUserNameChange(e){
+    function handleUserNameChange(e) {
         setUserName(e.target.value)
         e.preventDefault();
     }
-    function handlePasswordChange(e){
+    function handlePasswordChange(e) {
         setPassword(e.target.value)
         e.preventDefault();
     }
@@ -36,4 +36,3 @@ function SignIn(props) {
         </div>
     )
 }
-module.exports = SignIn;

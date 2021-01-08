@@ -1,5 +1,4 @@
-const {useState} = require('react');
-const Post = require('./post');
+import react, {useState} from 'react';
 const {getPosts}= require('../Api');
 
 function RenderPosts(posts, onePost) {
@@ -16,8 +15,8 @@ function RenderPosts(posts, onePost) {
     })
     return renderPosts;
 }
-function PostList(props) {
-    const {posts, setPosts} = useState(null);
+export default function PostList(props) {
+    const [posts, setPosts] = useState(null);
     getPosts(props.userToken).then(response=>{
         setPosts(response);
     });
@@ -38,4 +37,3 @@ function PostList(props) {
         )
     }
 }
-module.exports =PostList;

@@ -1,15 +1,17 @@
-const { useState } = require('react');
+import react, {useState} from 'react';
 
-function SignUp(props) {
-    const { email, setEmail } = useState(null);
-    const { userName, setUserName } = useState(null);
-    const { password, setPassword } = useState(null);
+export default function SignUp(props) {
+    const [ email, setEmail ] = useState("");
+    const [ userName, setUserName ] = useState("");
+    const [ password, setPassword ] = useState("");
 
     function logIn(e) {
-        props.signIn(userName, email, password).then((response) => {
-            props.setToken(response);
-        });
         e.preventDefault();
+        props.signUp(userName, email, password).then((response) => {
+           props.signIn(userName, password).then((response) => {
+            props.setToken(response);
+           }).catch((error) => {console.error({signUpSignIn: error})});
+        }).catch((err) => {console.error({signUp: err});});
     };
     function handleEmailChange(e){
         setEmail(e.target.value)
@@ -44,4 +46,3 @@ function SignUp(props) {
         </div>
     )
 }
-module.exports = SignUp;
